@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Files · Khaled Fadhel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FAF7F2;--warm-white:#FFF9F2;--sand:#E8DDD0;--terracotta:#C4714A;--terracotta-dark:#9E5535;--terracotta-light:#F0C4A8;--ink:#2C2420;--ink-soft:#5C4D44;--ink-muted:#9C8F88;--gold:#C9973A;--gold-light:#F5E4C0;--border:rgba(196,113,74,0.15);--shadow:0 4px 24px rgba(44,36,32,0.08);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 3rem;background:rgba(250,247,242,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--terracotta);text-decoration:none;font-weight:700;}
+  .nav-links{display:flex;gap:2rem;list-style:none;}
+  .nav-links a{text-decoration:none;color:var(--ink-soft);font-size:0.9rem;transition:color 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--terracotta);}
+  .hamburger{display:none;cursor:pointer;flex-direction:column;gap:5px;}
+  .hamburger span{width:22px;height:2px;background:var(--ink-soft);border-radius:2px;}
+  .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--terracotta);color:#fff;padding:14px 28px;border-radius:100px;text-decoration:none;font-size:0.9rem;font-weight:500;transition:background 0.2s,transform 0.15s;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .btn-primary:hover{background:var(--terracotta-dark);transform:translateY(-1px);}
+  .btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--terracotta);padding:14px 28px;border-radius:100px;text-decoration:none;font-size:0.9rem;font-weight:500;border:1.5px solid var(--terracotta);transition:all 0.2s;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .btn-outline:hover{background:var(--terracotta);color:#fff;}
+  .page-header{padding:8rem 3rem 3rem;background:var(--warm-white);border-bottom:1px solid var(--sand);}
+  .max-w{max-width:1080px;margin:0 auto;}
+  .section-label{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--terracotta);font-weight:500;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:700;color:var(--ink);letter-spacing:-0.02em;margin-bottom:0.75rem;}
+  .page-intro{color:var(--ink-soft);font-size:1rem;font-weight:300;max-width:480px;}
+  /* FILES */
+  .files-page{padding:3rem;}
+  .files-toolbar{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center;}
+  .filter-btn{padding:7px 18px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--ink-soft);font-size:0.83rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+  .filter-btn.active{background:var(--terracotta);color:#fff;border-color:var(--terracotta);}
+  .filter-btn:hover:not(.active){border-color:var(--terracotta);color:var(--terracotta);}
+  .owner-btn{margin-left:auto;}
+  .files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+  .file-card{background:var(--warm-white);border:1px solid var(--border);border-radius:1.2rem;padding:1.25rem;display:flex;align-items:flex-start;gap:1rem;transition:transform 0.2s,box-shadow 0.2s;}
+  .file-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .file-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+  .file-icon.pdf{background:#fee2e2;}.file-icon.doc{background:#dbeafe;}.file-icon.img{background:#fef9c3;}.file-icon.zip{background:#f3e8ff;}
+  .file-info{flex:1;min-width:0;}
+  .file-name{font-weight:500;font-size:0.9rem;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .file-meta{font-size:0.75rem;color:var(--ink-muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .file-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.68rem;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;padding:2px 8px;border-radius:100px;}
+  .badge-pub{background:#dcfce7;color:#15803d;}.badge-priv{background:var(--sand);color:var(--ink-soft);}
+  .file-action{font-size:0.75rem;color:var(--terracotta);font-weight:500;text-decoration:none;margin-top:6px;display:inline-block;}
+  /* OWNER PANEL */
+  .owner-panel{background:var(--warm-white);border:1.5px dashed var(--terracotta-light);border-radius:1.2rem;padding:1.5rem;margin-bottom:2rem;}
+  .owner-panel-header{display:flex;justify-content:space-between;align-items:center;font-weight:500;color:var(--terracotta);margin-bottom:1.25rem;font-size:0.92rem;}
+  .owner-close{background:none;border:none;cursor:pointer;font-size:1rem;color:var(--ink-muted);}
+  .upload-area{border:1.5px dashed var(--sand);border-radius:0.75rem;transition:border-color 0.2s,background 0.2s;}
+  .upload-area.drag-over{border-color:var(--terracotta);background:rgba(196,113,74,0.04);}
+  .upload-prompt{padding:2rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;cursor:pointer;text-align:center;}
+  .upload-icon{font-size:2rem;}.upload-text{font-weight:500;color:var(--ink-soft);font-size:0.9rem;}.upload-sub{font-size:0.78rem;color:var(--ink-muted);}
+  .upload-file-preview{padding:0.75rem;background:var(--cream);border-radius:0.5rem;margin-bottom:1rem;font-size:0.88rem;color:var(--ink-soft);}
+  .upload-options{display:flex;flex-direction:column;gap:0.6rem;}
+  .upload-label{font-size:0.78rem;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);}
+  .radio-opt{font-size:0.88rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;cursor:pointer;}
+  .progress-bar{height:6px;background:var(--sand);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--terracotta);border-radius:100px;transition:width 0.3s;width:0%;}
+  .progress-label{font-size:0.82rem;color:var(--ink-muted);margin-top:6px;}
+  input,textarea{background:var(--cream);border:1px solid var(--sand);border-radius:0.75rem;padding:0.85rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.2s;width:100%;}
+  input:focus{border-color:var(--terracotta);}input::placeholder{color:var(--ink-muted);}
+  .files-loading{display:flex;align-items:center;gap:0.75rem;color:var(--ink-muted);font-size:0.9rem;padding:2rem 0;}
+  .spinner{width:18px;height:18px;border:2px solid var(--sand);border-top-color:var(--terracotta);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .files-empty{color:var(--ink-muted);font-size:0.9rem;padding:2rem 0;}
+  /* MODALS */
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(44,36,32,0.5);align-items:center;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--warm-white);border-radius:1.2rem;padding:2rem;width:90%;max-width:400px;box-shadow:0 20px 60px rgba(44,36,32,0.2);}
+  .modal h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.5rem;}
+  .modal p{font-size:0.88rem;color:var(--ink-soft);margin-bottom:1.25rem;}
+  .modal-actions{display:flex;gap:0.75rem;margin-top:1rem;}
+  footer{background:var(--ink);color:rgba(255,255,255,0.5);text-align:center;padding:2rem 3rem;font-size:0.82rem;}
+  footer a{color:var(--terracotta-light);text-decoration:none;}footer strong{color:rgba(255,255,255,0.8);}
+  @media(max-width:768px){
+    nav{padding:1rem 1.5rem;}
+    .nav-links{display:none;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:var(--cream);padding:1.5rem;border-bottom:1px solid var(--border);}
+    .nav-links.open{display:flex;}
+    .hamburger{display:flex;}
+    .page-header,.files-page{padding-left:1.5rem;padding-right:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">KF</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#portfolio">Portfolio</a></li>
+    <li><a href="/#cv">CV</a></li>
+    <li><a href="/files/" class="active">Files</a></li>
+    <li><a href="/#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="page-header">
+  <div class="max-w">
+    <div class="section-label">Files & Resources</div>
+    <h1>Shared Files</h1>
+    <p class="page-intro">Public files are freely available to download. Private files require a password set by me.</p>
+  </div>
+</div>
+
+<div class="files-page">
+  <div class="max-w">
+
+    <!-- OWNER UPLOAD PANEL -->
+    <div id="ownerPanel" class="owner-panel" style="display:none;">
+      <div class="owner-panel-header">
+        <span>🔧 Owner Panel — Upload Files</span>
+        <button class="owner-close" onclick="document.getElementById('ownerPanel').style.display='none'">✕</button>
+      </div>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="fileInput" multiple style="display:none" onchange="handleFileSelect(this.files)">
+        <div class="upload-prompt" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">⬆</div>
+          <div class="upload-text">Click to select files, or drag & drop here</div>
+          <div class="upload-sub">Any file type · Max 50MB each</div>
+        </div>
+      </div>
+      <div id="uploadForm" style="display:none;">
+        <div class="upload-file-preview" id="uploadFilePreview"></div>
+        <div class="upload-options">
+          <label class="upload-label">Access</label>
+          <div style="display:flex;gap:0.75rem;">
+            <label class="radio-opt"><input type="radio" name="access" value="public" checked> 🔓 Public</label>
+            <label class="radio-opt"><input type="radio" name="access" value="private"> 🔒 Private</label>
+          </div>
+          <div id="pwField" style="display:none;margin-top:0.75rem;">
+            <label class="upload-label">Password for this file</label>
+            <input type="password" id="filePassword" placeholder="Set a password…" style="max-width:280px;">
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+          <button class="btn-primary" onclick="uploadFile()">Upload →</button>
+          <button class="btn-outline" onclick="cancelUpload()">Cancel</button>
+        </div>
+        <div id="uploadProgress" style="display:none;margin-top:1rem;">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">Uploading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="files-toolbar">
+      <button class="filter-btn active" onclick="filterFiles('all',this)">All Files</button>
+      <button class="filter-btn" onclick="filterFiles('public',this)">Public</button>
+      <button class="filter-btn" onclick="filterFiles('private',this)">Private</button>
+      <button class="filter-btn owner-btn" onclick="promptOwnerLogin()">⚙ Manage</button>
+    </div>
+
+    <div id="filesLoading" class="files-loading"><div class="spinner"></div><span>Loading files…</span></div>
+    <div class="files-grid" id="filesGrid" style="display:none;"></div>
+    <div id="filesEmpty" class="files-empty" style="display:none;">No files here yet.</div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="pwModal">
+  <div class="modal">
+    <h3>🔒 Private File</h3>
+    <p id="pwModalDesc">This file is password protected.</p>
+    <input type="password" id="pwModalInput" placeholder="Enter password…" onkeydown="if(event.key==='Enter') submitPwModal()">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="submitPwModal()">Unlock →</button>
+      <button class="btn-outline" onclick="document.getElementById('pwModal').classList.remove('open')">Cancel</button>
+    </div>
+    <div id="pwModalError" style="display:none;margin-top:0.75rem;font-size:0.82rem;color:#c44;"></div>
+  </div>
+</div>
+
+<!-- OWNER LOGIN MODAL -->
+<div class="modal-overlay" id="ownerModal">
+  <div class="modal">
+    <h3>Owner Login</h3>
+    <p>Enter your owner password to upload and manage files.</p>
+    <input type="password" id="ownerPwInput" placeholder="Owner password…" onkeydown="if(event.key==='Enter') submitOwnerLogin()">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="submitOwnerLogin()">Login →</button>
+      <button class="btn-outline" onclick="document.getElementById('ownerModal').classList.remove('open')">Cancel</button>
+    </div>
+    <div id="ownerPwError" style="display:none;margin-top:0.75rem;font-size:0.82rem;color:#c44;"></div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 <strong>Khaled Fadhel</strong> · <a href="/">Home</a> · <a href="#">Back to top ↑</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL   = 'https://mwjcjlsatazhzlwxshkg.supabase.co';
+const SUPABASE_ANON  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13amNqbHNhdGF6aHpsd3hzaGtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDg4NzAsImV4cCI6MjA5MzMyNDg3MH0.ngdztg4HCullcpumajPTC6-sY8rV_4wXtsbr5B7aILY';
+const OWNER_PASSWORD = '0549978730';
+const BUCKET = 'personal-files';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let isOwner = false, allFiles = [], currentFilter = 'all', pendingFiles = null, pendingPrivateFile = null;
+
+function fileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if(ext==='pdf') return {icon:'📄',cls:'pdf'};
+  if(['doc','docx'].includes(ext)) return {icon:'📝',cls:'doc'};
+  if(['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return {icon:'🖼',cls:'img'};
+  if(['zip','rar','7z','tar','gz'].includes(ext)) return {icon:'🗜',cls:'zip'};
+  if(['xls','xlsx','csv'].includes(ext)) return {icon:'📊',cls:'doc'};
+  return {icon:'📁',cls:'zip'};
+}
+function formatSize(b) {
+  if(!b) return '—';
+  if(b<1024) return b+' B';
+  if(b<1048576) return (b/1024).toFixed(0)+' KB';
+  return (b/1048576).toFixed(1)+' MB';
+}
+
+async function loadFiles() {
+  document.getElementById('filesLoading').style.display='flex';
+  document.getElementById('filesGrid').style.display='none';
+  document.getElementById('filesEmpty').style.display='none';
+  const {data,error} = await sb.from('files').select('*').order('uploaded_at',{ascending:false});
+  if(error){document.getElementById('filesLoading').innerHTML='<span style="color:var(--terracotta)">⚠ Could not load files.</span>';return;}
+  allFiles = data||[];
+  renderFiles(currentFilter);
+}
+
+function renderFiles(filter) {
+  currentFilter=filter;
+  const grid=document.getElementById('filesGrid');
+  const loading=document.getElementById('filesLoading');
+  const empty=document.getElementById('filesEmpty');
+  let list = filter==='all' ? allFiles : allFiles.filter(f=>f.access===filter);
+  loading.style.display='none';
+  if(!list.length){grid.style.display='none';empty.style.display='block';return;}
+  empty.style.display='none';grid.style.display='grid';
+  grid.innerHTML = list.map(f=>{
+    const {icon,cls}=fileIcon(f.name);
+    return `<div class="file-card">
+      <div class="file-icon ${cls}">${icon}</div>
+      <div class="file-info">
+        <div class="file-name">${f.name}</div>
+        <div class="file-meta"><span>${formatSize(f.size)}</span>
+          <span class="file-badge ${f.access==='public'?'badge-pub':'badge-priv'}">${f.access==='public'?'🔓 Public':'🔒 Private'}</span>
+        </div>
+        <a href="#" class="file-action" onclick="handleDownload(event,'${f.id}','${f.access}','${f.name}')">${f.access==='public'?'Download ↓':'Unlock & Download 🔒'}</a>
+        ${isOwner?`<a href="#" class="file-action" style="color:var(--ink-muted);margin-left:0.5rem;" onclick="deleteFile(event,'${f.id}','${f.storage_path}','${f.name}')">Delete ✕</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.filterFiles = (filter,btn) => {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderFiles(filter);
+};
+
+window.handleDownload = (e,id,access,name) => {
+  e.preventDefault();
+  const file = allFiles.find(f=>String(f.id)===String(id));
+  if(!file) return;
+  if(access==='public'){triggerDownload(file.url,file.name);}
+  else {
+    pendingPrivateFile=file;
+    document.getElementById('pwModalDesc').textContent=`"${name}" is password protected.`;
+    document.getElementById('pwModalInput').value='';
+    document.getElementById('pwModalError').style.display='none';
+    document.getElementById('pwModal').classList.add('open');
+    setTimeout(()=>document.getElementById('pwModalInput').focus(),100);
+  }
+};
+window.submitPwModal = () => {
+  const entered=document.getElementById('pwModalInput').value;
+  const errEl=document.getElementById('pwModalError');
+  if(!pendingPrivateFile) return;
+  if(entered===pendingPrivateFile.password){
+    document.getElementById('pwModal').classList.remove('open');
+    triggerDownload(pendingPrivateFile.url,pendingPrivateFile.name);
+    pendingPrivateFile=null;
+  } else {errEl.textContent='Incorrect password.';errEl.style.display='block';document.getElementById('pwModalInput').value='';}
+};
+function triggerDownload(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+
+window.promptOwnerLogin = () => {
+  if(isOwner){const p=document.getElementById('ownerPanel');p.style.display=p.style.display==='none'?'block':'none';return;}
+  document.getElementById('ownerPwInput').value='';
+  document.getElementById('ownerPwError').style.display='none';
+  document.getElementById('ownerModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ownerPwInput').focus(),100);
+};
+window.submitOwnerLogin = () => {
+  const pw=document.getElementById('ownerPwInput').value;
+  if(pw===OWNER_PASSWORD){
+    isOwner=true;
+    document.getElementById('ownerModal').classList.remove('open');
+    document.getElementById('ownerPanel').style.display='block';
+    renderFiles(currentFilter); setupDragDrop();
+  } else {document.getElementById('ownerPwError').textContent='Wrong password.';document.getElementById('ownerPwError').style.display='block';}
+};
+
+window.handleFileSelect = files => {
+  if(!files.length) return;
+  pendingFiles=files;
+  document.getElementById('uploadArea').style.display='none';
+  document.getElementById('uploadFilePreview').innerHTML=Array.from(files).map(f=>`<span>${fileIcon(f.name).icon} ${f.name} (${formatSize(f.size)})</span>`).join('<br>');
+  document.getElementById('uploadForm').style.display='block';
+};
+document.querySelectorAll('input[name="access"]').forEach(r=>r.addEventListener('change',()=>{
+  document.getElementById('pwField').style.display=r.value==='private'?'block':'none';
+}));
+window.cancelUpload = () => {
+  pendingFiles=null;
+  document.getElementById('uploadArea').style.display='block';
+  document.getElementById('uploadForm').style.display='none';
+  document.getElementById('uploadProgress').style.display='none';
+};
+window.uploadFile = async () => {
+  if(!pendingFiles) return;
+  const access=document.querySelector('input[name="access"]:checked').value;
+  const password=access==='private'?document.getElementById('filePassword').value:'';
+  if(access==='private'&&!password){alert('Please set a password.');return;}
+  document.getElementById('uploadProgress').style.display='block';
+  const fill=document.getElementById('progressFill');
+  const label=document.getElementById('progressLabel');
+  for(const file of Array.from(pendingFiles)){
+    label.textContent=`Uploading ${file.name}…`;fill.style.width='10%';
+    const safeName=file.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9._\-]/g,'').replace(/^\.+/,'')||'file';
+    const storagePath=`uploads/${Date.now()}_${safeName}`;
+    const {error:upErr}=await sb.storage.from(BUCKET).upload(storagePath,file,{upsert:false});
+    if(upErr){alert('Upload failed: '+upErr.message);return;}
+    fill.style.width='70%';
+    const {data:urlData}=sb.storage.from(BUCKET).getPublicUrl(storagePath);
+    const url=urlData.publicUrl;fill.style.width='85%';
+    const {error:dbErr}=await sb.from('files').insert({name:file.name,size:file.size,access,password:password||'',url,storage_path:storagePath,uploaded_at:new Date().toISOString()});
+    if(dbErr){alert('Metadata save failed: '+dbErr.message);return;}
+    fill.style.width='100%';label.textContent=`✓ ${file.name} uploaded!`;
+    await new Promise(r=>setTimeout(r,400));
+  }
+  label.textContent='✓ All done!';
+  setTimeout(()=>{cancelUpload();loadFiles();},1000);
+};
+window.deleteFile = async (e,id,storagePath,name) => {
+  e.preventDefault();
+  if(!confirm(`Delete "${name}"?`)) return;
+  if(storagePath) await sb.storage.from(BUCKET).remove([storagePath]);
+  const {error}=await sb.from('files').delete().eq('id',id);
+  if(error){alert('Delete failed: '+error.message);return;}
+  loadFiles();
+};
+function setupDragDrop(){
+  const area=document.getElementById('uploadArea');
+  area.addEventListener('dragover',e=>{e.preventDefault();area.classList.add('drag-over');});
+  area.addEventListener('dragleave',()=>area.classList.remove('drag-over'));
+  area.addEventListener('drop',e=>{e.preventDefault();area.classList.remove('drag-over');handleFileSelect(e.dataTransfer.files);});
+}
+loadFiles();
+</script>
+</body>
+</html>
